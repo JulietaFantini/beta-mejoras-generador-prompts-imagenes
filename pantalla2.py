@@ -9,16 +9,7 @@ def configurar_pantalla2(mostrar_pantalla1):
     if "params" not in st.session_state or not st.session_state.params:
         st.warning("No se han proporcionado datos desde Pantalla 1. Por favor, completá los campos obligatorios.")
         # Botón para generar un nuevo prompt
-if st.button("Generar un nuevo prompt"):
-    mostrar_pantalla1()
-
-# Mensaje final
-st.markdown("---")
-st.markdown(
-    """
-    Trabajo final de un curso de IA. Para cualquier feedback o consulta, escribí a [julietafantini@gmail.com](mailto:julietafantini@gmail.com).
-    """
-)
+        if st.button("Generar un nuevo prompt"):
             mostrar_pantalla1()
         return
 
@@ -130,7 +121,7 @@ st.markdown(
         """
     )
 
-    
+    st.markdown("---")
     st.markdown(
         """
         Trabajo final de un curso de IA. Para cualquier feedback o consulta, escribí a [julietafantini@gmail.com](mailto:julietafantini@gmail.com).
