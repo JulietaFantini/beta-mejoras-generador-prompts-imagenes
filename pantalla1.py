@@ -46,6 +46,7 @@ def configurar_sidebar():
             - **Créditos y fuentes**: Detalles del desarrollo del proyecto.
             """)
 
+
 def configurar_pantalla1(mostrar_pantalla2=None):
     """
     Configura la pantalla inicial de la aplicación para capturar parámetros clave.
@@ -55,27 +56,17 @@ def configurar_pantalla1(mostrar_pantalla2=None):
 
     params = st.session_state.params
 
-    # Configuración de estilos
-    st.markdown(
-        """
-        <style>
-        h1, h2, h3 { font-family: "Sans-serif"; color: #6B46C1; }
-        .st-markdown p { font-family: "Monospace"; font-size: 16px; color: #1A202C; }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
     st.title("Creador de Imágenes con IA")
     st.markdown(
         """
-        ¡Hola! Vamos a transformar tu idea en una imagen única. Este asistente te guiará paso a paso para crear una descripción que las IAs entenderán perfectamente.
+        ¡Hola! Vamos a transformar tu idea en una imagen única. 
+        Este asistente te guiará paso a paso para crear una descripción que las IAs entenderán perfectamente.
 
         Comencemos con lo esencial...
         """
     )
 
-    # IDEA INICIAL
+    # 1. IDEA INICIAL
     st.header("1. Idea Inicial")
     st.markdown("¿Qué imagen tenés en mente? Describe los elementos principales y el ambiente deseado.")
     params["idea_inicial"] = st.text_input(
@@ -89,9 +80,9 @@ def configurar_pantalla1(mostrar_pantalla2=None):
             ❌ "Una ciudad" (muy general).
             """
         )
-    st.info("🎯 Tip: Describe el elemento principal y el ambiente para guiar mejor a la IA.")
+    st.info("🎯 Tip: Describí el elemento principal y el ambiente para guiar mejor a la IA.")
 
-    # TIPO DE IMAGEN
+    # 2. TIPO DE IMAGEN
     st.header("2. Tipo de Imagen")
     st.markdown("¿Cómo querés que se vea tu imagen? Seleccioná una opción.")
     params["tipo_de_imagen"] = st.selectbox(
@@ -105,19 +96,25 @@ def configurar_pantalla1(mostrar_pantalla2=None):
             "Otro (Describe tu idea)"
         ]
     )
+
     if "Otro" in params["tipo_de_imagen"]:
         params["tipo_de_imagen_personalizado"] = st.text_input(
             "Describí tu tipo de imagen personalizado:",
             placeholder="Ejemplo: Collage surrealista."
         )
 
-    # PROPÓSITO
+    # 3. PROPÓSITO
     st.header("3. Propósito")
     st.markdown("¿Para qué vas a usar la imagen? Seleccioná una categoría y, si corresponde, una subcategoría.")
+    
+    # Agregamos "Otro" para ser coherentes
+    proposito_opciones = ["Marketing y Publicidad", "Arte y Diseño", "Contenido Digital", "Educativo", "Otro (Describe)"]
+    
     params["proposito_categoria"] = st.selectbox(
         "Categoría:",
-        ["Marketing y Publicidad", "Arte y Diseño", "Contenido Digital", "Educativo"]
+        proposito_opciones
     )
+
     if params["proposito_categoria"] == "Marketing y Publicidad":
         params["proposito_subcategoria"] = st.selectbox(
             "Subcategorías:",
@@ -138,8 +135,13 @@ def configurar_pantalla1(mostrar_pantalla2=None):
             "Subcategorías:",
             ["Material Didáctico", "Infografías"]
         )
+    elif "Otro" in params["proposito_categoria"]:
+        params["proposito_personalizado"] = st.text_input(
+            "Describí el propósito:",
+            placeholder="Ejemplo: Uso personal, inspiración, etc."
+        )
 
-    # ESTILO ARTÍSTICO
+    # 4. ESTILO ARTÍSTICO
     st.header("4. Estilo Artístico")
     st.markdown("¿Qué estilo visual preferís? Esto definirá la estética general de tu imagen.")
     params["estilo_artístico"] = st.selectbox(
@@ -160,14 +162,14 @@ def configurar_pantalla1(mostrar_pantalla2=None):
             placeholder="Ejemplo: Realismo fotográfico con elementos surrealistas."
         )
 
-    # CARACTERÍSTICAS TÉCNICAS
+    # 5. CARACTERÍSTICAS TÉCNICAS
     st.header("5. Características Técnicas")
 
     col1, col2, col3 = st.columns(3)
 
     with col1:
         st.subheader("Iluminación")
-        st.markdown("Seleccioná el tipo de luz:")
+        st.markdown("Tipo de luz:")
         params["iluminación"] = st.selectbox(
             "Opciones:",
             [
@@ -206,7 +208,6 @@ def configurar_pantalla1(mostrar_pantalla2=None):
         )
 
     st.subheader("Resolución")
-    st.markdown("Seleccioná el tamaño adecuado según el uso previsto.")
     params["resolución"] = st.selectbox(
         "Opciones:",
         [
@@ -218,7 +219,6 @@ def configurar_pantalla1(mostrar_pantalla2=None):
     )
 
     st.subheader("Acabado")
-    st.markdown("Definí el efecto final que querés lograr.")
     params["acabado"] = st.selectbox(
         "Opciones:",
         [
@@ -229,16 +229,19 @@ def configurar_pantalla1(mostrar_pantalla2=None):
         ]
     )
 
-    # Validar y continuar
+    # VALIDAR Y CONTINUAR
     if st.button("Validar y continuar"):
-        errores = [campo for campo, valor in params.items() if not valor]
+        # Simple validación: revisar si algo está vacío.
+        # Omitimos "proposito_subcategoria" si es "Otro"
+        errores = []
+        for campo, valor in params.items():
+            # Si es un string y está en blanco, lo consideramos error
+            if isinstance(valor, str) and not valor.strip():
+                errores.append(campo)
+
         if errores:
-            st.error("Por favor, completá todos los campos obligatorios.")
+            st.error("Por favor, completá todos los campos obligatorios o retirá los que no apliquen.")
         else:
             st.success("¡Todo listo! Avanzando a la siguiente etapa.")
             if mostrar_pantalla2:
                 mostrar_pantalla2()
-
-if __name__ == "__main__":
-    configurar_sidebar()
-    configurar_pantalla1()
