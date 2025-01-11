@@ -46,7 +46,7 @@ def configurar_sidebar():
             - **Créditos y fuentes**: Detalles del desarrollo del proyecto.
             """)
 
-def configurar_pantalla1():
+def configurar_pantalla1(mostrar_pantalla2=None):
     """
     Configura la pantalla inicial de la aplicación para capturar parámetros clave.
     """
@@ -236,8 +236,8 @@ def configurar_pantalla1():
             st.error("Por favor, completá todos los campos obligatorios.")
         else:
             st.success("¡Todo listo! Avanzando a la siguiente etapa.")
-            st.session_state.mostrar_pantalla2 = True
-            st.experimental_rerun()
+            if mostrar_pantalla2:
+                mostrar_pantalla2()
 
 if __name__ == "__main__":
     configurar_sidebar()
