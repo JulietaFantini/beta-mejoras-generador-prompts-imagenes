@@ -45,10 +45,9 @@ def main():
 
     # Navegación entre pantallas
     if st.session_state.pantalla_actual == "pantalla1":
-        configurar_pantalla1(mostrar_pantalla2)
+        configurar_pantalla1(mostrar_pantalla2=mostrar_pantalla2)
     elif st.session_state.pantalla_actual == "pantalla2":
         configurar_pantalla2(mostrar_pantalla1)
 
 if __name__ == "__main__":
     main()
-
