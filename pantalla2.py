@@ -6,16 +6,16 @@ def configurar_pantalla2(mostrar_pantalla1):
     Genera un prompt basado en los datos ingresados en Pantalla 1 y permite su edición.
     También incluye recomendaciones de herramientas y un enlace para traducción.
     """
+    # Chequeo de datos previos
     if "params" not in st.session_state or not st.session_state.params:
         st.warning("No se han proporcionado datos desde Pantalla 1. Por favor, completá los campos obligatorios.")
-        # Botón para generar un nuevo prompt
         if st.button("Generar un nuevo prompt"):
             mostrar_pantalla1()
         return
 
     params = st.session_state.params
 
-    # Generación del prompt
+    # Función local para generar el prompt
     def generar_prompt(params):
         """
         Genera un texto (prompt) a partir de los parámetros proporcionados.
@@ -23,25 +23,36 @@ def configurar_pantalla2(mostrar_pantalla1):
         """
         frases = []
 
-        # Primera Frase
+        # 1) Idea inicial
         if params.get("idea_inicial"):
-            frases.append(f"Imagina {params['idea_inicial']}.")
+            frases.append(f"Imaginá {params['idea_inicial']}.")
 
-        # Segunda Frase
-        tipo_imagen = params.get("tipo_de_imagen_personalizado", params["tipo_de_imagen"]) if "Otro" in params["tipo_de_imagen"] else params["tipo_de_imagen"]
-        estilo = params.get("estilo_artístico_personalizado", params["estilo_artístico"]) if "Otro" in params["estilo_artístico"] else params["estilo_artístico"]
-        frases.append(f"Esta imagen es un {tipo_imagen.lower()} con un estilo {estilo.lower()}.")
+        # 2) Tipo + Estilo
+        if "Otro" in params["tipo_de_imagen"]:
+            tipo_imagen = params.get("tipo_de_imagen_personalizado", "un tipo no definido").lower()
+        else:
+            tipo_imagen = params["tipo_de_imagen"].lower()
 
-        # Tercera Frase
+        if "Otro" in params["estilo_artístico"]:
+            estilo = params.get("estilo_artístico_personalizado", "un estilo no definido").lower()
+        else:
+            estilo = params["estilo_artístico"].lower()
+
+        frases.append(f"Esta imagen es un {tipo_imagen} con un estilo {estilo}.")
+
+        # 3) Propósito
         if params.get("proposito_categoria"):
-            if params.get("proposito_categoria") == "Otro":
+            if "Otro" in params["proposito_categoria"]:
                 proposito = params.get("proposito_personalizado", "un propósito no definido").lower()
                 frases.append(f"Fue creada para {proposito}.")
             else:
-                subcat = f", específicamente {params['proposito_subcategoria'].lower()}" if params.get("proposito_subcategoria") else ""
+                subcat = (
+                    f", específicamente {params['proposito_subcategoria'].lower()}" 
+                    if params.get("proposito_subcategoria") else ""
+                )
                 frases.append(f"Fue creada para {params['proposito_categoria'].lower()}{subcat}.")
 
-        # Cuarta Frase
+        # 4) Características técnicas
         aspectos = []
         if params.get("iluminación"):
             aspectos.append(f"iluminación {params['iluminación'].lower()}")
@@ -59,9 +70,10 @@ def configurar_pantalla2(mostrar_pantalla1):
 
         return " ".join(frases)
 
+    # Generar prompt
     prompt_generado = generar_prompt(params)
 
-    # Pantalla principal
+    # Layout de Pantalla 2
     st.title("Tu prompt está listo")
 
     # Área de Edición
@@ -77,20 +89,19 @@ def configurar_pantalla2(mostrar_pantalla1):
     st.markdown("---")
     st.markdown("## 📋 COPIÁ TU PROMPT")
     st.code(prompt_editado, language="")
-    st.info("### ⬆️ CLICK EN EL ÍCONO DE COPIAR ⬆️\nMirá la esquina superior derecha del recuadro gris 👉")
+    st.info("### ⬆️ CLICK EN EL ÍCONO DE COPIAR ⬆️\nMirá la esquina superior derecha del recuadro gris.")
     st.markdown("---")
 
     # Herramientas Recomendadas
     st.markdown("## Herramientas Recomendadas")
     st.markdown(
         """
-        - **[DALL·E](https://openai.com/dall-e/)**: Herramienta de OpenAI para dibujar imágenes con inteligencia artificial.
-          Permite creaciones artísticas y composiciones realistas, basada en modelos GPT.
-        - **[MidJourney](https://www.midjourney.com/)**: Reconocida por su calidad artística y estética muy cuidada en las imágenes generadas.
-        - **[Stable Diffusion](https://stability.ai/)**: Ideal para personalización y modificaciones detalladas de tu prompt.
-        - **[Grok de Twitter](https://twitter.com/)**: Conectá tus imágenes con las tendencias más actuales en redes sociales.
-        - **[Claude](https://www.anthropic.com/)**: Ideal para analizar y mejorar prompts complejos, integrándose con chatbots IA.
-        - **[Copilot](https://copilot.github.com/)**: Soporte creativo para generación rápida y versátil de contenido y prompts.
+        - **[DALL·E](https://openai.com/dall-e/)**: Creaciones artísticas y composiciones realistas basadas en IA de OpenAI.  
+        - **[MidJourney](https://www.midjourney.com/)**: Reconocida por la alta calidad estética y detalles artísticos.  
+        - **[Stable Diffusion](https://stability.ai/)**: Ideal para personalización y modificaciones detalladas de tu prompt, con gran comunidad open-source.  
+        - **[Grok de Twitter](https://twitter.com/)**: Conectá tus imágenes con las tendencias actuales en redes sociales (opcional).  
+        - **[Claude](https://www.anthropic.com/)**: Para mejorar prompts complejos e integrarlos con chatbots IA.  
+        - **[Copilot](https://copilot.github.com/)**: Soporte creativo para generación rápida de contenido y prompts.
         """
     )
 
@@ -98,14 +109,15 @@ def configurar_pantalla2(mostrar_pantalla1):
     st.markdown("## ¿Necesitás el prompt en inglés?")
     st.markdown(
         """
-        Muchas herramientas funcionan mejor con prompts en inglés. Si es tu caso, usá la traducción.
-
+        Muchas herramientas funcionan mejor con prompts en inglés. Si es tu caso, usá la traducción:
         1. Hacé clic en "Abrir Google Translate".
         2. El texto se cargará automáticamente.
         3. Copiá la traducción.
         """
     )
-    google_translate_url = f"https://translate.google.com/?sl=es&tl=en&text={prompt_editado.replace(' ', '%20')}"
+    # Codificar el prompt para URL (nativo de Python, sin librerías extra).
+    text_encoded = prompt_editado.replace(" ", "%20")
+    google_translate_url = f"https://translate.google.com/?sl=es&tl=en&text={text_encoded}"
     if st.button("Abrir Google Translate"):
         st.markdown(f"[Abrir Google Translate →]({google_translate_url})", unsafe_allow_html=True)
 
@@ -116,11 +128,9 @@ def configurar_pantalla2(mostrar_pantalla1):
         1. Copiá el texto usando el ícono de arriba.
         2. Abrí la herramienta que prefieras en otra pestaña.
         3. Pegá el prompt donde dice "Describe la imagen...".
-        4. ¡Generá tu imagen! Si utilizás el traductor, asegurate de pegar el texto traducido.
+        4. ¡Generá tu imagen! (Si traducís, pegá el texto en inglés).
         """
     )
-
-    
 
     # Botón para generar un nuevo prompt
     if st.button("Generar un nuevo prompt"):
@@ -129,9 +139,12 @@ def configurar_pantalla2(mostrar_pantalla1):
     st.markdown("---")
     st.markdown(
         """
-        Trabajo final de un curso de IA. Para cualquier feedback o consulta, escribí a [julietafantini@gmail.com](mailto:julietafantini@gmail.com).
+        Trabajo final de un curso de IA. 
+        Para cualquier feedback o consulta, escribí a [julietafantini@gmail.com](mailto:julietafantini@gmail.com).
         """
     )
 
+
 if __name__ == "__main__":
+    # Ejecución directa de pantalla2 (solo para pruebas)
     configurar_pantalla2(lambda: print("Pantalla 1 cargada."))
