@@ -1,6 +1,11 @@
+[server]
+fileWatcherType = "poll"
+layout = "wide"
+initial_sidebar_state = "expanded"
+
 [theme]
-primaryColor="#7B4DAE"            
-backgroundColor="#F5F5F5"         
-secondaryBackgroundColor="#FFFFFF"
-textColor="#333333"               
-font="sans serif"
+primaryColor = "#6B46C1"
+backgroundColor = "#F8F6FF"
+secondaryBackgroundColor = "#EEEAF5"
+textColor = "#1A202C"
+font = "monospace"
