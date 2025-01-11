@@ -9,8 +9,7 @@ def main():
     Maneja la navegación entre Pantalla 1 y Pantalla 2.
     """
 
-    # Desactiva el tema predeterminado de Streamlit si querés forzarlo, 
-    # aunque con config.toml ya se aplica el tema personalizado.
+    # Podés descomentar si querés desactivar totalmente el tema predeterminado de Streamlit.
     # os.environ["STREAMLIT_THEME"] = "false"
 
     # Configuración de la página (usa la info de config.toml para colores y fuentes)
@@ -21,7 +20,51 @@ def main():
         initial_sidebar_state="expanded"
     )
 
-    # Inicializar variables en session_state si no existen
+    # Inyectar estilos adicionales:
+    # 1) Botones y expanders,
+    # 2) Forzar sans-serif en inputs (manteniendo monospace en el resto).
+    st.markdown(
+        """
+        <style>
+        /* ==== 1) Botones con el color primario (#6B46C1) ==== */
+        .stButton>button {
+            background-color: #6B46C1;
+            color: #FFFFFF;
+            border-radius: 8px;
+            font-size: 16px;
+            border: none;
+        }
+        .stButton>button:hover {
+            background-color: #5A3AA9; /* un poco más oscuro en hover */
+        }
+
+        /* ==== 2) Expanders con un fondo gris-lavanda ==== */
+        .st-expander {
+            background-color: #F8F6FC !important; /* tono muy suave */
+            border-radius: 8px;
+        }
+
+        /* ==== 3) Forzar sans-serif en inputs y labels ==== */
+        /* Etiquetas de los campos de entrada */
+        .stTextInput label, .stTextArea label, .stSelectbox label, .stRadio label, .stCheckbox label {
+            font-family: sans-serif !important;
+        }
+        /* Texto dentro de los inputs, textareas, selects, etc. */
+        .stTextInput input, .stTextArea textarea, 
+        .stSelectbox [role="combobox"], 
+        .stRadio div[data-testid="stMarkdownContainer"], 
+        .stCheckbox div[data-testid="stMarkdownContainer"] {
+            font-family: sans-serif !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # Mostrar la barra lateral educativa SIEMPRE
+    configurar_sidebar()
+
+    # Inicializar variable de navegación si no existe
     if "pantalla_actual" not in st.session_state:
         st.session_state.pantalla_actual = "pantalla1"
 
@@ -32,36 +75,7 @@ def main():
     def mostrar_pantalla2():
         st.session_state.pantalla_actual = "pantalla2"
 
-    # Inyectar estilos adicionales mínimos (botones, expanders, etc.)
-    st.markdown(
-        """
-        <style>
-        /* Ajuste de botones al color principal (primaryColor del config) */
-        .stButton>button {
-            background-color: #7B4DAE;
-            color: #FFFFFF;
-            border-radius: 8px;
-            font-size: 16px;
-            border: none;
-        }
-        .stButton>button:hover {
-            background-color: #693DA6; /* un poco más oscuro en hover */
-        }
-
-        /* Expanders con un fondo gris muy suave */
-        .st-expander {
-            background-color: #F8F6FC !important;
-            border-radius: 8px;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
-    # Mostrar la barra lateral educativa SIEMPRE
-    configurar_sidebar()
-
-    # Navegación entre pantallas
+    # Lógica de navegación
     if st.session_state.pantalla_actual == "pantalla1":
         configurar_pantalla1(mostrar_pantalla2=mostrar_pantalla2)
     elif st.session_state.pantalla_actual == "pantalla2":
