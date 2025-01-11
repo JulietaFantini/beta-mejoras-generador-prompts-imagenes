@@ -65,7 +65,7 @@ def configurar_pantalla2(mostrar_pantalla1):
     st.title("Tu prompt está listo")
 
     # Área de Edición
-    st.markdown("## Revisá y editá tu prompt")
+    st.markdown("## Revisá y editá tus instrucciones")
     prompt_editado = st.text_area(
         "Podés ajustar el prompt generado:",
         value=prompt_generado,
@@ -76,9 +76,8 @@ def configurar_pantalla2(mostrar_pantalla1):
     # Área de Copiado
     st.markdown("---")
     st.markdown("## 📋 COPIÁ TU PROMPT")
-    st.info("### ⬆️ CLICK EN EL ÍCONO DE COPIAR ⬆️\nMirá la esquina superior derecha del recuadro gris 👉")
     st.code(prompt_editado, language="")
-    st.success("✅ Cuando copies el texto, verás una confirmación aquí")
+    st.info("### ⬆️ CLICK EN EL ÍCONO DE COPIAR ⬆️\nMirá la esquina superior derecha del recuadro gris 👉")
     st.markdown("---")
 
     # Herramientas Recomendadas
@@ -121,16 +120,18 @@ def configurar_pantalla2(mostrar_pantalla1):
         """
     )
 
+    
+
+    # Botón para generar un nuevo prompt
+    if st.button("Generar un nuevo prompt"):
+        mostrar_pantalla1()
+
     st.markdown("---")
     st.markdown(
         """
         Trabajo final de un curso de IA. Para cualquier feedback o consulta, escribí a [julietafantini@gmail.com](mailto:julietafantini@gmail.com).
         """
     )
-
-    # Botón para generar un nuevo prompt
-    if st.button("Generar un nuevo prompt"):
-        mostrar_pantalla1()
 
 if __name__ == "__main__":
     configurar_pantalla2(lambda: print("Pantalla 1 cargada."))
